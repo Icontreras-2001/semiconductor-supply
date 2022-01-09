@@ -1,0 +1,121 @@
+## PYTHON CODE ####
+
+#Find the Current Working Directory:
+import os
+os.getcwd()
+
+os.chdir("/Users/bella/Desktop/datanalysis/Project_semiconductor_supply")
+
+import math
+import collections
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as pp
+from sklearn.linear_model import LinearRegression
+%matplotlib inline
+
+data = pd.read_csv('statistic_semiconductor-industry-sales-worldwide-1987-2022.csv')
+data.shape
+data.describe()
+
+x = data['year']
+y = data['sales']
+n = np.size(x)
+
+x_mean = np.mean(x)
+y_mean = np.mean(y)
+x_mean, y_mean
+  
+Sxy = np.sum(x * y) - n * x_mean * y_mean
+Sxx = np.sum(x * x) - n * x_mean * x_mean
+  
+b1 = Sxy / Sxx
+b0 = y_mean - b1 * x_mean
+print('slope b1 is:', b1)
+print('intercept b0 is:', b0)
+
+pp.scatter(x,y)
+pp.title('Semiconductor Market Size Worldwide from 1987 to 2022')
+pp.xlabel('Year')
+pp.ylabel('Sales (in billion U.S. dollars)')
+pp.show
+
+print(data.head())
+
+data.plot.scatter('year', 'sales')
+
+pp.title('Semiconductor Market Size Worldwide from 1987 to 2022')
+pp.ylabel('Sales (in billion U.S. dollars)')
+pp.xlabel('Year')
+
+ax = pp.gca()
+pp.xticks(rotation=45)
+for label in ax.get_xaxis().get_ticklabels()[::2]:
+    label.set_visible(False)
+    
+X = data.iloc[:, :-1].values
+y = data.iloc[:, 1].values
+
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
+
+from sklearn.linear_model import LinearRegression
+regressor = LinearRegression()
+regressor.fit(X_train, y_train)
+
+print(regressor.intercept_)
+print(regressor.coef_)
+
+y_pred = regressor.predict(X_test)
+
+df = pd.DataFrame({'Actual': y_test, 'Predicted': y_pred})
+df
+
+from sklearn import metrics
+print('Mean Absolute Error:', metrics.mean_absolute_error(y_test, y_pred))
+print('Mean Squared Error:', metrics.mean_squared_error(y_test, y_pred))
+print('Root Mean Squared Error:', np.sqrt(metrics.mean_squared_error(y_test, y_pred)))
+
+m, b = np.polyfit(x, y, 1)
+
+data.plot.scatter('year', 'sales')
+
+pp.title('Semiconductor Market Size Worldwide from 1987 to 2022')
+pp.ylabel('Sales (in billion U.S. dollars)')
+pp.xlabel('Year')
+
+ax = pp.gca()
+pp.xticks(rotation=45)
+for label in ax.get_xaxis().get_ticklabels()[::2]:
+    label.set_visible(False)
+    
+pp.plot(x, m*x + b)
+
+# bar chart using matplotlib
+x = ['1987', '1988', '1989', '1990', '1991', '1992', '1993',
+     '1994', '1995', '1996', '1997', '1998', '1999', '2000',
+     '2001', '2002', '2003', '2004', '2005', '2006', '2007',
+     '2008', '2009', '2010', '2011', '2012', '2013', '2014',
+     '2015', '2016', '2017', '2018', '2019', '2020', '2021',
+     '2022']
+y = [33, 45, 49, 51, 55, 60, 77,
+     102, 144, 132, 137, 126, 149.4, 204,
+     139, 141, 166, 213, 227, 247.7, 255.6,
+     248.6, 226.31, 298.32, 299.52, 291.56, 305.58, 335.84,
+     335.17, 338.93, 412.22, 468.78, 412.31, 440.39, 552.96,
+     601.49]
+x_pos = [i for i, _ in enumerate(x)]
+
+pp.bar(x, y, color='steelblue')
+pp.xlabel("Year")
+pp.ylabel("Sales (in billion U.S. dollars)")
+pp.title("Semiconductor Market Size Worldwide from 1987 to 2022")
+
+pp.xticks(x_pos, x)
+
+ax = pp.gca()
+pp.xticks(rotation=45)
+for label in ax.get_xaxis().get_ticklabels()[::2]:
+    label.set_visible(False)
+
+pp.show()
